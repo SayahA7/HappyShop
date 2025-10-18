@@ -34,33 +34,25 @@ public class CustomerModel {
     private String displayTaTrolley = "";                                // Text area content showing current trolley items (Trolley Page)
     private String displayTaReceipt = "";                                // Text area content showing receipt after checkout (Receipt Page)
 
-    //SELECT productID, description, image, unitPrice,inStock quantity
-    void search() throws SQLException {
-        String productId = cusView.tfId.getText().trim();
-        if(!productId.isEmpty()){
-            theProduct = databaseRW.searchByProductId(productId); //search database
-            if(theProduct != null && theProduct.getStockQuantity()>0){
-                double unitPrice = theProduct.getUnitPrice();
-                String description = theProduct.getProductDescription();
-                int stock = theProduct.getStockQuantity();
+    private ArrayList<Product> productList = new ArrayList<>(); // store search results
+    private Product selectedProduct; // store selected product from results
 
-                String baseInfo = String.format("Product_Id: %s\n%s,\nPrice: £%.2f", productId, description, unitPrice);
-                String quantityInfo = stock < 100 ? String.format("\n%d units left.", stock) : "";
-                displayLaSearchResult = baseInfo + quantityInfo;
-                System.out.println(displayLaSearchResult);
-            }
-            else{
-                theProduct=null;
-                displayLaSearchResult = "No Product was found with ID " + productId;
-                System.out.println("No Product was found with ID " + productId);
-            }
-        }else{
-            theProduct=null;
-            displayLaSearchResult = "Please type ProductID";
-            System.out.println("Please type ProductID.");
+    void doSearch() throws SQLException {
+        String keyword = cusView.tfId.getText().trim();
+
+        if (!keyword.isEmpty()) {
+            productList.clear();
+            productList.addAll(databaseRW.searchProduct(keyword)); // same as Warehouse
+            cusView.obrLvProducts.getItems().setAll(productList);  // ✅ actually updates the list view
+
+            System.out.println(productList.size() + " products found for: " + keyword);
+        } else {
+            cusView.obrLvProducts.getItems().clear();
+            System.out.println("Please type product ID or name to search");
         }
-        updateView();
     }
+
+
 
     void addToTrolley(){
         if(theProduct!= null){

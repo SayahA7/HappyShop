@@ -9,7 +9,7 @@ public class CustomerController {
     public void doAction(String action) throws SQLException, IOException {
         switch (action) {
             case "Search":
-                cusModel.search();
+                cusModel.doSearch();
                 break;
             case "Add to Trolley":
                 cusModel.addToTrolley();
