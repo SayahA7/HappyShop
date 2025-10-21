@@ -4,6 +4,7 @@ import ci553.happyshop.utility.UIStyle;
 import ci553.happyshop.utility.WinPosManager;
 import ci553.happyshop.utility.WindowBounds;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -16,6 +17,8 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 
 /**
@@ -85,12 +88,12 @@ public class CustomerView  {
         tfId.setStyle(UIStyle.textFiledStyle);
         tfId.setOnAction(actionEvent -> {
             try {
-                cusController.doAction("Search");
+                cusController.doAction("Search"); // connect the search button and text field to the controller
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
-
+        // add search bar with 🔍 button to allow customers to search bt product ID or name
         Button btnSearch = new Button("🔍");
         btnSearch.setStyle(UIStyle.buttonStyle);
         btnSearch.setOnAction(this::buttonClicked);
@@ -101,12 +104,27 @@ public class CustomerView  {
         Label laSearchSummary = new Label("Search Summary");
         laSearchSummary.setStyle(UIStyle.labelStyle);
 
-        // identical to warehouse
+        // add Add To Trolley button
+        Button AddToTrolley = new Button("Add To Trolley");
+        AddToTrolley.setStyle(UIStyle.greenFillBtnStyle);
+        AddToTrolley.setOnAction(this::buttonClicked);
+
+        HBox hbAddToTrolley = new HBox(10, AddToTrolley);
+        hbAddToTrolley.setAlignment(Pos.CENTER);
+        hbAddToTrolley.setPadding(new Insets(5));
+
         obrLvProducts = new ListView<>();
         obrLvProducts.setPrefHeight(200);
         obrLvProducts.setStyle(UIStyle.listViewStyle);
 
-        // Make each row show image + product info (just like Warehouse)
+        /**
+         * When is setCellFactory() Needed?
+         * If you want to customize each row’s content (e.g.,images, buttons, labels, etc.).
+         * If you need special formatting (like colors or borders).
+         *
+         * When is setCellFactory() NOT Needed?
+         * Each row is just plain text without images or formatting.
+         */
         obrLvProducts.setCellFactory(param -> new ListCell<ci553.happyshop.catalogue.Product>() {
             @Override
             protected void updateItem(ci553.happyshop.catalogue.Product product, boolean empty) {
@@ -115,18 +133,18 @@ public class CustomerView  {
                 if (empty || product == null) {
                     setGraphic(null);
                 } else {
-                    // Build image path
-                    String imageName = product.getProductImageName();
+                    String imageName = product.getProductImageName(); // Get image name (e.g. "0001.jpg")
                     String relativeImageUrl = ci553.happyshop.utility.StorageLocation.imageFolder + imageName;
-                    java.nio.file.Path imageFullPath = java.nio.file.Paths.get(relativeImageUrl).toAbsolutePath();
-                    String imageFullUri = imageFullPath.toUri().toString();
+                    // Get the full absolute path to the image
+                    Path imageFullPath = Paths.get(relativeImageUrl).toAbsolutePath();
+                    String imageFullUri = imageFullPath.toUri().toString(); // Build the full image Uri
 
-                    // Load image (fallback to placeholder if missing)
-                    javafx.scene.image.ImageView ivPro;
+                    ImageView ivPro;
                     try {
-                        ivPro = new javafx.scene.image.ImageView(new javafx.scene.image.Image(imageFullUri, 50, 45, true, true));
+                        ivPro = new ImageView(new Image(imageFullUri, 50,45, true,true)); // Attempt to load the product image
                     } catch (Exception e) {
-                        ivPro = new javafx.scene.image.ImageView(new javafx.scene.image.Image("imageHolder.jpg", 50, 45, true, true));
+                        // If loading fails, use a default image directly from the resources folder
+                        ivPro = new ImageView(new Image("imageHolder.jpg",50,45,true,true)); // Directly load from resources
                     }
 
                     // Label for product info
@@ -138,18 +156,18 @@ public class CustomerView  {
                                     product.getProductDescription())
                     );
 
-                    // Combine image + text side by side
+                    // combine image and text
                     javafx.scene.layout.HBox hbox = new javafx.scene.layout.HBox(10, ivPro, laProInfo);
                     hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-                    // Apply this layout to each row
+                    // apply it to each row
                     setGraphic(hbox);
                 }
             }
         });
 
 
-        VBox vbSearchResult = new VBox(5, laSearchSummary, obrLvProducts);
+        VBox vbSearchResult = new VBox(5, hbAddToTrolley, obrLvProducts);
 
         VBox vbSearchPage = new VBox(10, laTitle, hbSearch, vbSearchResult);
         vbSearchPage.setPrefWidth(COLUMN_WIDTH);
@@ -214,7 +232,7 @@ public class CustomerView  {
             String action = btn.getText();
 
             if (action.equals("🔍")) action = "Search";
-            if(action.equals("Add to Trolley")){
+            if(action.equals("Add To Trolley")){
                 showTrolleyOrReceiptPage(vbTrolleyPage); //ensure trolleyPage shows if the last customer did not close their receiptPage
             }
             if(action.equals("OK & Close")){

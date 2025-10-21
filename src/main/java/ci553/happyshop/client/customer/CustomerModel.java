@@ -10,6 +10,7 @@ import ci553.happyshop.utility.ProductListFormatter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.PublicKey;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,32 +38,40 @@ public class CustomerModel {
     private ArrayList<Product> productList = new ArrayList<>(); // store search results
     private Product selectedProduct; // store selected product from results
 
+    /**
+     * search the database for matching product ids or manes using databaseRW.searchProduct()
+     * @throws SQLException
+     * display the results in the listview with product details
+     */
     void doSearch() throws SQLException {
         String keyword = cusView.tfId.getText().trim();
 
         if (!keyword.isEmpty()) {
             productList.clear();
             productList.addAll(databaseRW.searchProduct(keyword)); // same as Warehouse
-            cusView.obrLvProducts.getItems().setAll(productList);  // ✅ actually updates the list view
+            cusView.obrLvProducts.getItems().setAll(productList);  // update the list view
 
             System.out.println(productList.size() + " products found for: " + keyword);
-        } else {
+        }
+        else {
             cusView.obrLvProducts.getItems().clear();
             System.out.println("Please type product ID or name to search");
         }
     }
 
-
-
     void addToTrolley(){
-        if(theProduct!= null){
+        System.out.println("addToTrolley gets called in model");
+        Product selectedProduct = cusView.obrLvProducts.getSelectionModel().getSelectedItem(); // get selected product from list
+        if(selectedProduct != null){
 
             // trolley.add(theProduct) — Product is appended to the end of the trolley.
             // To keep the trolley organized, add code here or call a method that:
             //TODO
             // 1. Merges items with the same product ID (combining their quantities).
             // 2. Sorts the products in the trolley by product ID.
-            trolley.add(theProduct);
+            // trolley.add(theProduct);
+            theProduct = selectedProduct;
+            makeOrganizedTrolley();
             displayTaTrolley = ProductListFormatter.buildString(trolley); //build a String for trolley so that we can show it
         }
         else{
@@ -71,6 +80,17 @@ public class CustomerModel {
         }
         displayTaReceipt=""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
         updateView();
+    }
+
+    void makeOrganizedTrolley(){
+        for(Product p:trolley){
+            if(p.getProductId().equals(theProduct.getProductId())){
+                p.setOrderedQuantity(p.getOrderedQuantity()+1); //increase quantity by 1 each time the same product is selected
+                return;
+            }
+        }
+        Product pNew= new Product(theProduct.getProductId(), theProduct.getProductDescription(), theProduct.getProductImageName(), theProduct.getUnitPrice(), theProduct.getStockQuantity());
+        trolley.add(pNew);
     }
 
     void checkOut() throws IOException, SQLException {
@@ -135,7 +155,8 @@ public class CustomerModel {
             if (grouped.containsKey(id)) {
                 Product existing = grouped.get(id);
                 existing.setOrderedQuantity(existing.getOrderedQuantity() + p.getOrderedQuantity());
-            } else {
+            }
+            else {
                 // Make a shallow copy to avoid modifying the original
                 grouped.put(id,new Product(p.getProductId(),p.getProductDescription(),
                         p.getProductImageName(),p.getUnitPrice(),p.getStockQuantity()));
@@ -174,5 +195,8 @@ public class CustomerModel {
     //for test only
     public ArrayList<Product> getTrolley() {
         return trolley;
+    }
+    public void setTheProduct(Product theProduct) {
+        this.theProduct = theProduct;
     }
 }

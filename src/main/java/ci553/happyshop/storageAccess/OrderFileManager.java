@@ -48,6 +48,7 @@ public class OrderFileManager {
     public static void createOrderFile(Path dir, int orderId, String orderDetail) throws IOException {
         String orderFileName = String.valueOf(orderId)+".txt";
         Path path = dir.resolve(orderFileName); // eg. orders/ordered/12.txt
+        Files.createDirectories(dir); // make sure orders/ordered exists
         if(Files.notExists(path)) {
             Files.createFile(path);
             try (BufferedWriter writer = Files.newBufferedWriter(path)) {
