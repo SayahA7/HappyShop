@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.security.PublicKey;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,6 +92,9 @@ public class CustomerModel {
         }
         Product pNew= new Product(theProduct.getProductId(), theProduct.getProductDescription(), theProduct.getProductImageName(), theProduct.getUnitPrice(), theProduct.getStockQuantity());
         trolley.add(pNew);
+
+        // Sort trolley by product ID
+        trolley.sort(Comparator.comparing(Product::getProductId));
     }
 
     void checkOut() throws IOException, SQLException {
