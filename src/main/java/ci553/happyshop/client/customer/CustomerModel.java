@@ -161,6 +161,9 @@ public class CustomerModel {
             displayTaTrolley = "Your trolley is empty";
             System.out.println("Your trolley is empty");
         }
+        // Clear search box and search results list
+        cusView.tfId.clear();
+        cusView.obrLvProducts.getItems().clear();
         updateView();
     }
 
@@ -188,6 +191,9 @@ public class CustomerModel {
     void cancel(){
         trolley.clear();
         displayTaTrolley="";
+        // Clear search box and search results list when cancelled.
+        cusView.tfId.clear();
+        cusView.obrLvProducts.getItems().clear();
         updateView();
     }
     void closeReceipt(){
