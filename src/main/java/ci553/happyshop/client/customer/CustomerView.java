@@ -79,10 +79,20 @@ public class CustomerView  {
         viewWindow=window;// Sets viewWindow to this window for future reference and management.
     }
 
+    /**
+     * Create the search page for the customers client
+     *
+     * This part allows the customers to search for products by either their product ID or name
+     * Search text field and button are both connect to the controller
+     * Then passed to the CustomerModel to be processed there
+     * @return search page which contains input field, search button and result list
+     */
+
     private VBox createSearchPage() {
         Label laTitle = new Label("Search by product ID/Name");
         laTitle.setStyle(UIStyle.labelTitleStyle);
 
+        // Create the search text field
         tfId = new TextField();
         tfId.setPromptText("Enter product ID or name"); // Prompt the customer "Enter product ID or name"
         tfId.setStyle(UIStyle.textFiledStyle);

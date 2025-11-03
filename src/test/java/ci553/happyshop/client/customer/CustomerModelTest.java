@@ -1,6 +1,7 @@
 package ci553.happyshop.client.customer;
 
 import ci553.happyshop.catalogue.Product;
+import javafx.scene.control.TextField;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -8,6 +9,14 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 class CustomerModelTest {
 
+    /**
+     * Tests if the same product is added multiple times
+     * The trolley should merge duplicates and increase the ordered quantity
+     * instead of adding new product
+     *
+     * The trolley should only have one product
+     * The quantity should increase the quantity
+     */
     @Test
     void makeOrganizedTrolley() {
         CustomerModel cm = new CustomerModel();
@@ -23,6 +32,9 @@ class CustomerModelTest {
 
     /**
      * Tests if the trolley is sorted correctly in ascending order by product Id.
+     *
+     * The trolley should contain all added products
+     * The products Ids should appear in ascending order
      */
     @Test
     void sortByProductId() {
