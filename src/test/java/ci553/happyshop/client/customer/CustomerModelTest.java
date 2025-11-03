@@ -21,6 +21,9 @@ class CustomerModelTest {
         assertEquals(3, tro.get(0).getOrderedQuantity());
     }
 
+    /**
+     * Tests if the trolley is sorted correctly in ascending order by product Id.
+     */
     @Test
     void sortByProductId() {
         CustomerModel cm = new CustomerModel();

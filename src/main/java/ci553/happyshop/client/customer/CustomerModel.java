@@ -40,9 +40,11 @@ public class CustomerModel {
     private Product selectedProduct; // store selected product from results
 
     /**
-     * search the database for matching product ids or manes using databaseRW.searchProduct()
-     * @throws SQLException
-     * display the results in the listview with product details
+     * Searches the database for products that match the keyword typed by the customer.
+     * Get products Ids or names that match the keyword entered in the search box.
+     * Display results in the productList
+     * @throws SQLException if an error happens while accessing the database
+     * This method used the same search logic used in the warehouse.
      */
     void doSearch() throws SQLException {
         String keyword = cusView.tfId.getText().trim();
@@ -50,7 +52,7 @@ public class CustomerModel {
         if (!keyword.isEmpty()) {
             productList.clear();
             productList.addAll(databaseRW.searchProduct(keyword)); // same as Warehouse
-            cusView.obrLvProducts.getItems().setAll(productList);  // update the list view
+            cusView.obrLvProducts.getItems().setAll(productList);  // update customer list view
 
             System.out.println(productList.size() + " products found for: " + keyword);
         }
@@ -59,6 +61,13 @@ public class CustomerModel {
             System.out.println("Please type product ID or name to search");
         }
     }
+
+    /**
+     * Add the selected products from the search results into the trolley.
+     * When the user clicks the "Add To Trolley" button, this method takes the selected product
+     * from the search list and calls makeOrganizedTrolley().
+     *
+     */
 
     void addToTrolley(){
         System.out.println("addToTrolley gets called in model");
@@ -82,6 +91,13 @@ public class CustomerModel {
         displayTaReceipt=""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
         updateView();
     }
+
+    /**
+     * Update and organises the trolley.
+     * If the selected product already in the trolley, increase quantity by one.
+     * Otherwise, add a new product to the trolley.
+     * The trolley is then sorted in ascending order by Product ID.
+     */
 
     void makeOrganizedTrolley(){
         for(Product p:trolley){
@@ -196,10 +212,11 @@ public class CustomerModel {
      //Path.toUri(): Converts a Path object (a file or a directory path) to a URI object.
      //File.toURI(): Converts a File object (a file on the filesystem) to a URI object
 
-    //for test only
+    // For JUnit testing only
     public ArrayList<Product> getTrolley() {
         return trolley;
     }
+
     public void setTheProduct(Product theProduct) {
         this.theProduct = theProduct;
     }

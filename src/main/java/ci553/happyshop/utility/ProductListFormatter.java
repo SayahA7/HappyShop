@@ -21,6 +21,7 @@ public class ProductListFormatter {
     public static String buildString(ArrayList<Product> proList) {
         StringBuilder sb = new StringBuilder();
         double totalPrice=0;
+
         for (Product pr : proList) {
             int orderedQuantity = pr.getOrderedQuantity();
             //%-18.18s, format the argument as a String,

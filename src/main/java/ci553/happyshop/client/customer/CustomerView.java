@@ -31,7 +31,7 @@ import java.sql.SQLException;
 
 public class CustomerView  {
     public CustomerController cusController;
-    public javafx.scene.control.ListView<ci553.happyshop.catalogue.Product> obrLvProducts;
+    public ListView<ci553.happyshop.catalogue.Product> obrLvProducts;
 
     private final int WIDTH = UIStyle.customerWinWidth;
     private final int HEIGHT = UIStyle.customerWinHeight;
@@ -84,19 +84,22 @@ public class CustomerView  {
         laTitle.setStyle(UIStyle.labelTitleStyle);
 
         tfId = new TextField();
-        tfId.setPromptText("Enter product ID or name");
+        tfId.setPromptText("Enter product ID or name"); // Prompt the customer "Enter product ID or name"
         tfId.setStyle(UIStyle.textFiledStyle);
+        // Pressing Enter in this text field also triggers a search
         tfId.setOnAction(actionEvent -> {
             try {
                 cusController.doAction("Search"); // connect the search button and text field to the controller
-            } catch (Exception e) {
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
         // add search bar with 🔍 button to allow customers to search bt product ID or name
         Button btnSearch = new Button("🔍");
         btnSearch.setStyle(UIStyle.buttonStyle);
-        btnSearch.setOnAction(this::buttonClicked);
+        btnSearch.setOnAction(this::buttonClicked); // same as pressing Enter
 
         HBox hbSearch = new HBox(10, tfId, btnSearch);
         hbSearch.setAlignment(Pos.CENTER);
@@ -118,12 +121,10 @@ public class CustomerView  {
         obrLvProducts.setStyle(UIStyle.listViewStyle);
 
         /**
-         * When is setCellFactory() Needed?
-         * If you want to customize each row’s content (e.g.,images, buttons, labels, etc.).
-         * If you need special formatting (like colors or borders).
-         *
-         * When is setCellFactory() NOT Needed?
-         * Each row is just plain text without images or formatting.
+         * Changes how each product appears inside the search results list.
+         * Shows both product image and details side by side.
+         * Uses a ListCell with an ImageView for the product photo
+         * and a label for product information.
          */
         obrLvProducts.setCellFactory(param -> new ListCell<ci553.happyshop.catalogue.Product>() {
             @Override
@@ -132,6 +133,7 @@ public class CustomerView  {
 
                 if (empty || product == null) {
                     setGraphic(null);
+                    System.out.println("setCellFactory - empty item");
                 } else {
                     String imageName = product.getProductImageName(); // Get image name (e.g. "0001.jpg")
                     String relativeImageUrl = ci553.happyshop.utility.StorageLocation.imageFolder + imageName;
@@ -147,30 +149,17 @@ public class CustomerView  {
                         ivPro = new ImageView(new Image("imageHolder.jpg",50,45,true,true)); // Directly load from resources
                     }
 
-                    // Label for product info
-                    javafx.scene.control.Label laProInfo = new javafx.scene.control.Label(
-                            String.format("ID: %s | £%.2f | Stock: %d\n%s",
-                                    product.getProductId(),
-                                    product.getUnitPrice(),
-                                    product.getStockQuantity(),
-                                    product.getProductDescription())
-                    );
-
-                    // combine image and text
-                    javafx.scene.layout.HBox hbox = new javafx.scene.layout.HBox(10, ivPro, laProInfo);
-                    hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-
-                    // apply it to each row
-                    setGraphic(hbox);
+                    Label laProToString = new Label(product.toString()); // Create a label for product details
+                    HBox hbox = new HBox(10, ivPro, laProToString); // Put ImageView and label in a horizontal layout
+                    setGraphic(hbox);  // Set the whole row content
                 }
             }
         });
 
-
         VBox vbSearchResult = new VBox(5, hbAddToTrolley, obrLvProducts);
 
         VBox vbSearchPage = new VBox(10, laTitle, hbSearch, vbSearchResult);
-        vbSearchPage.setPrefWidth(COLUMN_WIDTH);
+        vbSearchPage.setPrefWidth(COLUMN_WIDTH-10);
         vbSearchPage.setAlignment(Pos.TOP_CENTER);
         vbSearchPage.setStyle("-fx-padding: 15px;");
 
@@ -225,6 +214,11 @@ public class CustomerView  {
         return vbReceiptPage;
     }
 
+    /**
+     * Takes button clicks from the CustomerView and sends then to the controller.
+     * Depending on the button pressed the cusController's doAction calls the appropriate method from the model class.
+     * @param event button click event by the user
+     */
 
     private void buttonClicked(ActionEvent event) {
         try{
@@ -247,7 +241,6 @@ public class CustomerView  {
         }
     }
 
-
     public void update(String imageName, String searchResult, String trolley, String receipt) {
         if (ivProduct != null) {
             ivProduct.setImage(new Image(imageName));
@@ -264,9 +257,11 @@ public class CustomerView  {
         }
     }
 
-
-    // Replaces the last child of hbRoot with the specified page.
-    // the last child is either vbTrolleyPage or vbReceiptPage.
+    /**
+     * Replaces the last child of hbRoot with the specified page.
+     * The last child is either vbTrolleyPage or vbReceiptPage.
+     * @param pageToShow vbTrolleyPage or vbReceiptPage.
+     */
     private void showTrolleyOrReceiptPage(Node pageToShow) {
         int lastIndex = hbRoot.getChildren().size() - 1;
         if (lastIndex >= 0) {
