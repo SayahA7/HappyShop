@@ -83,6 +83,8 @@ public class CustomerModel {
             theProduct = selectedProduct;
             makeOrganizedTrolley();
             displayTaTrolley = ProductListFormatter.buildString(trolley); //build a String for trolley so that we can show it
+            //Clear search box after adding an item
+            cusView.tfId.clear();
         }
         else{
             displayLaSearchResult = "Please search for an available product before adding it to the trolley";
@@ -129,6 +131,9 @@ public class CustomerModel {
                 Order theOrder = orderHub.newOrder(trolley);
                 trolley.clear();
                 displayTaTrolley ="";
+                //Reset product image
+                theProduct=null;
+                imageName = "imageHolder.jpg";
                 displayTaReceipt = String.format(
                         "Order_ID: %s\nOrdered_Date_Time: %s\n%s",
                         theOrder.getOrderId(),
@@ -194,6 +199,9 @@ public class CustomerModel {
         // Clear search box and search results list when cancelled.
         cusView.tfId.clear();
         cusView.obrLvProducts.getItems().clear();
+        //Reset product image
+        theProduct=null;
+        imageName = "imageHolder.jpg";
         updateView();
     }
     void closeReceipt(){
