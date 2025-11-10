@@ -166,7 +166,7 @@ public class CustomerView  {
             }
         });
 
-        VBox vbSearchResult = new VBox(5, hbAddToTrolley, obrLvProducts);
+        VBox vbSearchResult = new VBox(5, hbAddToTrolley, laSearchSummary, obrLvProducts);
 
         VBox vbSearchPage = new VBox(10, laTitle, hbSearch, vbSearchResult);
         vbSearchPage.setPrefWidth(COLUMN_WIDTH-10);
