@@ -1,13 +1,30 @@
 package ci553.happyshop.client.customer;
 
 import ci553.happyshop.catalogue.Product;
+import com.sun.javafx.tk.DummyToolkit;
 import javafx.scene.control.TextField;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 class CustomerModelTest {
+
+    /**
+     * Tests if the Add To Trolley actually adds products to trolley
+     */
+    @Test
+    void AddProductToTrolley() {
+        CustomerModel cm = new CustomerModel();
+        Product p = new Product("0001","TV","0001.jpg",12.01,100);
+
+        cm.setTheProduct(p);
+        cm.makeOrganizedTrolley();
+
+        assertEquals(1,cm.getTrolley().size());
+    }
 
     /**
      * Tests if the same product is added multiple times
@@ -58,4 +75,5 @@ class CustomerModelTest {
         assertEquals("0007", tro.get(2).getProductId());
 
     }
+
 }

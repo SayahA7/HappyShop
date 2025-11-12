@@ -101,6 +101,13 @@ public class CustomerModel {
         else{
             displayLaSearchResult = "Please search for an available product before adding it to the trolley";
             System.out.println("must search and get an available product before add to trolley");
+
+            /*
+             Show the message "No products selected!",
+             if a product is not selected
+             */
+            cusView.noResults.setText("No products selected!");
+            cusView.noResults.setVisible(true);
         }
         displayTaReceipt=""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
         updateView();
