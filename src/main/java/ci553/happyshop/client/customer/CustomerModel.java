@@ -53,8 +53,20 @@ public class CustomerModel {
             productList.clear();
             productList.addAll(databaseRW.searchProduct(keyword)); // same as Warehouse
             cusView.obrLvProducts.getItems().setAll(productList);  // update customer list view
-
             System.out.println(productList.size() + " products found for: " + keyword);
+            /*
+            If productList is still empty after search,
+            it shows the message "No products found!"
+
+            If not, don't show message
+             */
+            if  (productList.isEmpty()) {
+                cusView.noResults.setText("No products found!");
+                cusView.noResults.setVisible(true);
+                cusView.tfId.clear();
+            }else  {
+                cusView.noResults.setVisible(false);
+            }
         }
         else {
             cusView.obrLvProducts.getItems().clear();

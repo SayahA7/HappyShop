@@ -41,6 +41,8 @@ public class CustomerView  {
     private VBox vbTrolleyPage;  //vbTrolleyPage and vbReceiptPage will swap with each other when need
     private VBox vbReceiptPage;
 
+    public Label noResults;
+
     TextField tfId; //for user input on the search page. Made accessible so it can be accessed or modified by CustomerModel
     TextField tfName; //for user input on the search page. Made accessible so it can be accessed by CustomerModel
 
@@ -117,6 +119,11 @@ public class CustomerView  {
         Label laSearchSummary = new Label("Search Summary");
         laSearchSummary.setStyle(UIStyle.labelStyle);
 
+        //Label is shown when no products are found
+        noResults = new Label();
+        noResults.setStyle("-fx-background-color: white; -fx-text-fill: black; -fx-font-weight: bold;");
+        noResults.setVisible(false);
+
         // add Add To Trolley button
         Button AddToTrolley = new Button("Add To Trolley");
         AddToTrolley.setStyle(UIStyle.greenFillBtnStyle);
@@ -165,8 +172,11 @@ public class CustomerView  {
                 }
             }
         });
+        // laSearchSummary and noResults side by side
+        HBox hbSummary = new HBox(10, laSearchSummary, noResults);
+        hbSummary.setAlignment(Pos.CENTER_LEFT);
 
-        VBox vbSearchResult = new VBox(5, hbAddToTrolley, laSearchSummary, obrLvProducts);
+        VBox vbSearchResult = new VBox(5, hbAddToTrolley, hbSummary, obrLvProducts);
 
         VBox vbSearchPage = new VBox(10, laTitle, hbSearch, vbSearchResult);
         vbSearchPage.setPrefWidth(COLUMN_WIDTH-10);
