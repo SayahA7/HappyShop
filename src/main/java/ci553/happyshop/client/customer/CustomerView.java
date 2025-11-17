@@ -129,12 +129,12 @@ public class CustomerView  {
         AddToTrolley.setStyle(UIStyle.greenFillBtnStyle);
         AddToTrolley.setOnAction(this::buttonClicked);
 
-        HBox hbAddToTrolley = new HBox(10, AddToTrolley);
+        HBox hbAddToTrolley = new HBox(AddToTrolley);
         hbAddToTrolley.setAlignment(Pos.CENTER);
-        hbAddToTrolley.setPadding(new Insets(5));
 
         obrLvProducts = new ListView<>();
         obrLvProducts.setPrefHeight(200);
+        obrLvProducts.setFixedCellSize(50);
         obrLvProducts.setStyle(UIStyle.listViewStyle);
 
         /**
@@ -176,12 +176,9 @@ public class CustomerView  {
         HBox hbSummary = new HBox(10, laSearchSummary, noResults);
         hbSummary.setAlignment(Pos.CENTER_LEFT);
 
-        VBox vbSearchResult = new VBox(5, hbAddToTrolley, hbSummary, obrLvProducts);
-
-        VBox vbSearchPage = new VBox(10, laTitle, hbSearch, vbSearchResult);
+        VBox vbSearchPage = new VBox(10, laTitle, hbSearch, hbAddToTrolley, hbSummary, obrLvProducts);
         vbSearchPage.setPrefWidth(COLUMN_WIDTH-10);
         vbSearchPage.setAlignment(Pos.TOP_CENTER);
-        vbSearchPage.setStyle("-fx-padding: 15px;");
 
         return vbSearchPage;
     }
