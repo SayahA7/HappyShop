@@ -204,10 +204,16 @@ public class CustomerModel {
                 existing.setOrderedQuantity(existing.getOrderedQuantity() + p.getOrderedQuantity());
             }
             else {
-                // Make a shallow copy to avoid modifying the original
-                grouped.put(id,new Product(p.getProductId(),p.getProductDescription(),
-                        p.getProductImageName(),p.getUnitPrice(),p.getStockQuantity()));
-            }
+                /*
+                Created a copy of the product to avoid modifying the original trolley item
+                also copied the ordered quantity so the stock is reduced by the correct amount
+                 */
+                Product newProduct = new Product(p.getProductId(), p.getProductDescription(), p.getProductImageName(), p.getUnitPrice(), p.getStockQuantity());
+
+                newProduct.setOrderedQuantity(p.getOrderedQuantity());
+                grouped.put(id, newProduct);
+            };
+
         }
         return new ArrayList<>(grouped.values());
     }
